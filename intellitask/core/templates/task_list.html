@@ -6,12 +6,13 @@
 <body>
     <h1>Your Task List</h1>
 
-    <a href="{% url 'task_create' %}">Add a New Task</a> 
+    <a href="{% url 'task_create' %}">Add a New Task</a>
 
-    {% if tasks %}
+    {% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}</p> 
         <ul>
             {% for task in tasks %}
-                <li>{{ task.title }} - Deadline: {{ task.deadline }}</li> 
+                <li>{{ task.title }} - Deadline: {{ task.deadline }}</li>
             {% endfor %}
         </ul>
     {% else %}
