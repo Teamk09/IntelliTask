@@ -1,22 +1,5 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
-
-class User(AbstractUser):
-    email = models.EmailField(unique=True, blank=True, null=True)
-    groups = models.ManyToManyField(
-        'auth.Group',
-        blank=True,
-        help_text='',
-        related_name="myapp_user_set",
-        verbose_name='groups'
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        related_name="myapp_user_set",
-        verbose_name='user permissions'
-    )
+from django.contrib.auth.models import User
 
 # Task Model
 class Task(models.Model):

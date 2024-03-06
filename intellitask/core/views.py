@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
@@ -21,6 +21,10 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
 
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
 class Login(LoginView):
     template_name = 'login.html'
     redirect_field_name = 'task_list'  # Redirect to task list after login
@@ -30,11 +34,9 @@ def task_create(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
-            print("DEBUG: request.user:", request.user)
-            print("DEBUG: request.user.id:", request.user.id)
-            new_task = form.save(commit=False)
-            new_task.user_id = 2  # Assign the user's ID
-            new_task.save()
+            new_task = form.save(commit=False)  # Don't save to DB yet
+            new_task.user = request.user  # Assign the user
+            new_task.save()  # Now save to DB
             return redirect('task_list')
     else:
         form = TaskForm()
@@ -43,15 +45,8 @@ def task_create(request):
 
 @login_required
 def task_list(request):
-    print("User:", request.user)
-    print("Is Authenticated:", request.user.is_authenticated)
-    if request.user.is_authenticated:
-        print(request.user) # debugging
-        print(type(request.user)) # debugging
-        print(request.user.id) # debugging
-        tasks = Task.objects.filter(user_id=request.user.id)
-        return render(request, 'task_list.html', {'tasks': tasks, 'user': request.user})
-    else:
-        pass
+    tasks = Task.objects.filter(user_id=request.user.id)
+    return render(request, 'task_list.html', {'tasks': tasks, 'user': request.user})
+
 
 
