@@ -5,12 +5,33 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from apps.core.models import Task
 from .serializers import TaskSerializer
+from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+
+@api_view(['POST'])
+def api_login_view(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key})
+    else:
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def api_task_list(request):
     if request.method == 'GET':
-        print(request.headers.get('Authorization')) # Check header content
+        print(f"User authenticated: {request.user.is_authenticated}")
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            token = auth_header.split(' ')[1]
+            print(f"Received token: {token}")
         print(request.user)
         if request.user.is_authenticated:  # Check if user is authenticated
             tasks = Task.objects.filter(user=request.user)  # Filter by logged-in user
