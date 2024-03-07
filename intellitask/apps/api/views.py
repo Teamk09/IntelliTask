@@ -27,11 +27,9 @@ def api_login_view(request):
 @permission_classes([IsAuthenticated])
 def api_task_list(request):
     if request.method == 'GET':
-        print(f"User authenticated: {request.user.is_authenticated}")
         auth_header = request.headers.get('Authorization')
         if auth_header:
             token = auth_header.split(' ')[1]
-            print(f"Received token: {token}")
         print(request.user)
         if request.user.is_authenticated:  # Check if user is authenticated
             tasks = Task.objects.filter(user=request.user)  # Filter by logged-in user
