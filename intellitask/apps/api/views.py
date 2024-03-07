@@ -19,7 +19,7 @@ def api_task_list(request):
         if request.user.is_authenticated:  # Check if user is authenticated
             serializer = TaskSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save(user=request.user) # Assign the user
+                serializer.save(user=request.user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
