@@ -1,13 +1,17 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from apps.core.models import Task
 from .serializers import TaskSerializer
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def api_task_list(request):
     if request.method == 'GET':
+        print(request.headers.get('Authorization')) # Check header content
+        print(request.user)
         if request.user.is_authenticated:  # Check if user is authenticated
             tasks = Task.objects.filter(user=request.user)  # Filter by logged-in user
             serializer = TaskSerializer(tasks, many=True)
@@ -26,6 +30,7 @@ def api_task_list(request):
             return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def task_detail(request, pk):
     """
     Retrieve, update or delete a specific task.
