@@ -1,0 +1,18 @@
+/* Layout.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f0e8;
+    color: #382a22;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  main {
+    flex-grow: 1;
+  }

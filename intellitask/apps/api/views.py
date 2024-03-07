@@ -1,14 +1,11 @@
-from django.shortcuts import get_object_or_404
+from apps.core.models import Task
+from .serializers import TaskSerializer
+from django.contrib.auth import authenticate
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from apps.core.models import Task
-from .serializers import TaskSerializer
-from rest_framework.authtoken.views import obtain_auth_token
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
 @api_view(['POST'])
@@ -21,6 +18,16 @@ def api_login_view(request):
         return Response({'token': token.key})
     else:
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def api_logout_view(request):
+    try:
+        request.user.auth_token.delete()  # Delete the token
+        return Response(status=status.HTTP_200_OK)
+    except (AttributeError, ObjectDoesNotExist):
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 
 @api_view(['GET', 'POST'])

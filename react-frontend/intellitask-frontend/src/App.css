@@ -1,23 +1,31 @@
+/* App.css */
 body {
-    font-family: 'Arial', sans-serif;  /* Choose a modern, clean font */
-    background-color: #f4f0e8;  /* Light beige background */
-    color: #382a22;  /*  Dark brown text */
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f0e8;
+    color: #382a22;
     margin: 0;
     padding: 0;
-    display: flex; /* Use flexbox for layout */
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh; /* Center content vertically  */
-}
+    min-height: 100vh;
+  }
 
-.login-container {
+  .app-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .login-container {
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+  }
 
-h1 {
-    color: #684a32; /* Slightly darker brown for header */
-}
+  h1 {
+    color: #684a32;
+  }
