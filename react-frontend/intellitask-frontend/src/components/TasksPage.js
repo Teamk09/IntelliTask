@@ -13,6 +13,7 @@ const TasksPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const isMounted = useRef(false);
+  const [sortOption, setSortOption] = useState('default');
 
   useEffect(() => {
     if (!isMounted.current) {
@@ -50,6 +51,19 @@ const TasksPage = () => {
         console.error('Error fetching tasks: ', error);
       });
   }
+
+  const sortTasks = (tasks) => {
+    switch (sortOption) {
+      case 'date':
+        return tasks.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
+      case 'importance':
+        return tasks.sort((a, b) => b.importance_level - a.importance_level);
+      case 'alphabetical':
+        return tasks.sort((a, b) => a.title.localeCompare(b.title));
+      default:
+        return tasks;
+    }
+  };
 
   const handleTaskComplete = async taskId => {
     try {
@@ -95,18 +109,26 @@ const TasksPage = () => {
     <ProtectedRoute>
       <div className="flex justify-center items-center h-screen">
         <div className="bg-white rounded-lg shadow-md p-8 max-w-3xl w-full">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-2xl font-semibold text-gray-800">My Task List</h1>
-            <button
-              className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md flex items-center focus:outline-none"
-              onClick={() => setShowAddTask(!showAddTask)}
-            >
-              <FiPlus />
-              {showAddTask ? 'Close' : 'New Task'}
-            </button>
-          </div>
+        <div className="flex justify-between items-center mb-8">
+         <div>
+          <label htmlFor="sort-option" className="mr-2">Sort by:</label>
+          <select id="sort-option" value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="bg-gray-200 rounded-md p-2">
+            <option value="default">Default</option>
+            <option value="date">Date</option>
+            <option value="importance">Importance</option>
+            <option value="alphabetical">Alphabetical</option>
+          </select>
+        </div>
+        <button
+          className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md flex items-center focus:outline-none"
+          onClick={() => setShowAddTask(!showAddTask)}
+        >
+          <FiPlus />
+          {showAddTask ? 'Close' : 'New Task'}
+        </button>
+      </div>
           <ul className="task-list">
-            {tasks.map(task => (
+            {sortTasks(tasks).map(task => (
               <li
                 key={task.id}
                 className="bg-gray-100 p-4 rounded-md mb-4 flex items-center justify-between transition-all duration-200 hover:bg-gray-200 cursor-pointer"

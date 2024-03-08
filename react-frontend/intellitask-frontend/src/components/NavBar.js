@@ -44,6 +44,14 @@ const NavBar = () => {
           </li>
           <li>
             <Link
+              to="/tasks/completed"
+              className="block py-3 px-6 bg-gray-300 hover:bg-gray-400 text-white rounded-md m-2"
+            >
+              <span className="flex items-center justify-center">Completed Tasks</span>
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/logout"
               className="block py-3 px-6 bg-gray-300 hover:bg-gray-400 text-white rounded-md m-2"
             >
