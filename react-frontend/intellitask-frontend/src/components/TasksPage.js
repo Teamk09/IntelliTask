@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FiPlus } from "react-icons/fi";
 import AddTaskForm from './AddTask';
 import ProtectedRoute from '../ProtectedRoute';
+import TaskModal from './TaskModal';
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -9,6 +10,8 @@ const TasksPage = () => {
   const [error, setError] = useState(null);
   const [taskCheckboxes, setTaskCheckboxes] = useState({});
   const [showAddTask, setShowAddTask] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -28,7 +31,7 @@ const TasksPage = () => {
       .then(response => {
         if (!response.ok) {
           if (response.status === 401) return;
-          throw Error('Error fetching tasks');
+          throw new Error('Error fetching tasks');
         }
         return response.json();
       })
@@ -70,6 +73,21 @@ const TasksPage = () => {
     }
   };
 
+  const handleNewTask = (newTask) => {
+    setTasks([...tasks, newTask]);
+  };
+
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedTask(null);
+  };
+
   if (isLoading) return <p className="text-center text-gray-700">Loading tasks...</p>;
   if (error) return <p className="text-center text-red-600">Error fetching tasks: {error.message}</p>;
 
@@ -91,7 +109,8 @@ const TasksPage = () => {
             {tasks.map(task => (
               <li
                 key={task.id}
-                className="bg-gray-100 p-4 rounded-md mb-4 flex items-center justify-between transition-all duration-200 hover:bg-gray-200"
+                className="bg-gray-100 p-4 rounded-md mb-4 flex items-center justify-between transition-all duration-200 hover:bg-gray-200 cursor-pointer"
+                onClick={() => handleTaskClick(task)}
               >
                 <p className="text-lg text-gray-700">{task.title}</p>
                 <input
@@ -103,9 +122,10 @@ const TasksPage = () => {
               </li>
             ))}
           </ul>
-          {showAddTask && <AddTaskForm />}
+          {showAddTask && <AddTaskForm onNewTask={handleNewTask} />}
         </div>
       </div>
+      {showModal && <TaskModal task={selectedTask} onClose={closeModal} />}
     </ProtectedRoute>
   );
 };

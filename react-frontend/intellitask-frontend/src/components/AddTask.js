@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AddTaskForm = () => {
+const AddTaskForm = ({ onNewTask }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -19,7 +19,7 @@ const AddTaskForm = () => {
       formData.append('description', description);
       formData.append('deadline', deadline);
       formData.append('importance_level', importanceLevel);
-      formData.append('is_completed', false); // Default to not completed
+      formData.append('is_completed', false);
 
       const response = await fetch('http://127.0.0.1:8000/api/tasks/', {
         method: 'POST',
@@ -30,17 +30,15 @@ const AddTaskForm = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log('Task created:', data);
-
-
+        const newTask = await response.json();
+        onNewTask(newTask);
         setTitle('');
         setDescription('');
         setDeadline('');
         setImportanceLevel('1');
       } else {
         const errorData = await response.json();
-        throw Error(errorData.error || 'An error occurred while creating the task');
+        throw new Error(errorData.error || 'An error occurred while creating the task');
       }
     } catch (error) {
       console.error('Error creating task:', error);

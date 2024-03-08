@@ -1,10 +1,8 @@
-// NavBar.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   const toggleNav = () => setIsOpen(!isOpen);
 
   return (
