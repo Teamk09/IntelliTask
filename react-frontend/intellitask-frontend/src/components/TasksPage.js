@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AddTaskForm from './AddTask';
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -43,6 +44,7 @@ const TasksPage = () => {
             </li>
           ))}
         </ul>
+        <AddTaskForm />
       </div>
     </div>
   );
