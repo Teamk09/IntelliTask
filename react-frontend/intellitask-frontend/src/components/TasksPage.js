@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { FiPlus } from "react-icons/fi";
 import AddTaskForm from './AddTask';
 import ProtectedRoute from '../ProtectedRoute';
-import { FiPlus } from "react-icons/fi";
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -10,48 +9,46 @@ const TasksPage = () => {
   const [error, setError] = useState(null);
   const [taskCheckboxes, setTaskCheckboxes] = useState({});
   const [showAddTask, setShowAddTask] = useState(false);
-  const navigate = useNavigate();
   const isMounted = useRef(false);
 
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
-
-      setIsLoading(true);
-
-      fetch('http://127.0.0.1:8000/api/tasks/', {
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            if (response.status === 401) {
-            } else {
-              throw Error('Error fetching tasks');
-            }
-          }
-          return response.json();
-        })
-        .then((data) => {
-          const filteredTasks = data.filter((task) => !task.is_deleted);
-          setTasks(filteredTasks);
-          const initialCheckboxes = data.reduce((acc, task) => {
-            acc[task.id] = task.is_completed;
-            return acc;
-          }, {});
-          setTaskCheckboxes(initialCheckboxes);
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          setError(error);
-          setIsLoading(false);
-          console.error('Error fetching tasks: ', error);
-        });
+      fetchTasks();
     }
-  }, [navigate]);
+  }, []);
 
-  const handleTaskComplete = async (taskId) => {
+  const fetchTasks = () => {
+    setIsLoading(true);
+    fetch('http://127.0.0.1:8000/api/tasks/', {
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          if (response.status === 401) return;
+          throw Error('Error fetching tasks');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const filteredTasks = data.filter(task => !task.is_deleted);
+        setTasks(filteredTasks);
+        setTaskCheckboxes(data.reduce((acc, task) => {
+          acc[task.id] = task.is_completed;
+          return acc;
+        }, {}));
+        setIsLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setIsLoading(false);
+        console.error('Error fetching tasks: ', error);
+      });
+  }
+
+  const handleTaskComplete = async taskId => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/tasks/${taskId}/`, {
         method: 'PUT',
@@ -63,8 +60,8 @@ const TasksPage = () => {
       });
 
       if (response.ok) {
-        setTasks(tasks.filter((task) => task.id !== taskId));
-        setTaskCheckboxes((prev) => ({ ...prev, [taskId]: true }));
+        setTasks(tasks.filter(task => task.id !== taskId));
+        setTaskCheckboxes(prev => ({ ...prev, [taskId]: true }));
       } else {
         console.error("Error updating task:", response);
       }
@@ -73,13 +70,8 @@ const TasksPage = () => {
     }
   };
 
-  if (isLoading) {
-    return <p className="text-center text-gray-700">Loading tasks...</p>;
-  }
-
-  if (error) {
-    return <p className="text-center text-red-600">Error fetching tasks: {error.message}</p>;
-  }
+  if (isLoading) return <p className="text-center text-gray-700">Loading tasks...</p>;
+  if (error) return <p className="text-center text-red-600">Error fetching tasks: {error.message}</p>;
 
   return (
     <ProtectedRoute>
@@ -96,7 +88,7 @@ const TasksPage = () => {
             </button>
           </div>
           <ul className="task-list">
-            {tasks.map((task) => (
+            {tasks.map(task => (
               <li
                 key={task.id}
                 className="bg-gray-100 p-4 rounded-md mb-4 flex items-center justify-between transition-all duration-200 hover:bg-gray-200"
