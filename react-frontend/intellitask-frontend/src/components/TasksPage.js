@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddTaskForm from './AddTask';
 import ProtectedRoute from '../ProtectedRoute';
@@ -11,42 +11,45 @@ const TasksPage = () => {
   const [taskCheckboxes, setTaskCheckboxes] = useState({});
   const [showAddTask, setShowAddTask] = useState(false);
   const navigate = useNavigate();
+  const isMounted = useRef(false);
 
   useEffect(() => {
-    setIsLoading(true);
+    if (!isMounted.current) {
+      isMounted.current = true;
 
-    fetch('http://127.0.0.1:8000/api/tasks/', {
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          if (response.status === 401) {
-          } else {
-            throw Error('Error fetching tasks');
+      setIsLoading(true);
+
+      fetch('http://127.0.0.1:8000/api/tasks/', {
+        headers: {
+          'Authorization': `Token ${localStorage.getItem('token')}`,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            if (response.status === 401) {
+            } else {
+              throw Error('Error fetching tasks');
+            }
           }
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const filteredTasks = data.filter((task) => !task.is_deleted);
-        setTasks(filteredTasks);
-        const initialCheckboxes = data.reduce((acc, task) => {
-          acc[task.id] = task.is_completed;
-          return acc;
-        }, {});
-        setTaskCheckboxes(initialCheckboxes);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setIsLoading(false);
-        console.error('Error fetching tasks: ', error);
-      });
+          return response.json();
+        })
+        .then((data) => {
+          const filteredTasks = data.filter((task) => !task.is_deleted);
+          setTasks(filteredTasks);
+          const initialCheckboxes = data.reduce((acc, task) => {
+            acc[task.id] = task.is_completed;
+            return acc;
+          }, {});
+          setTaskCheckboxes(initialCheckboxes);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          setError(error);
+          setIsLoading(false);
+          console.error('Error fetching tasks: ', error);
+        });
+    }
   }, [navigate]);
-
-
 
   const handleTaskComplete = async (taskId) => {
     try {

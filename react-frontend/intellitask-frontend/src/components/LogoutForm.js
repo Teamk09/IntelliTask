@@ -1,26 +1,32 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Logout = () => {
   const navigate = useNavigate();
+  const isMounted = useRef(false);
 
   useEffect(() => {
-    const handleLogout = async () => {
-      try {
-        await fetch('http://127.0.0.1:8000/api/logout/', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Token ${localStorage.getItem('token')}`
-          }
-        });
+    if (!isMounted.current) {
+      isMounted.current = true;
 
-        navigate("/login");
-      } catch (error) {
-        console.error("Error logging out: ", error);
-      }
+      const handleLogout = async () => {
+        try {
+          await fetch('http://127.0.0.1:8000/api/logout/', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Token ${localStorage.getItem('token')}`,
+            },
+          });
+
+          localStorage.removeItem('token');
+          navigate('/');
+        } catch (error) {
+          console.error('Error logging out: ', error);
+        }
+      };
+
+      handleLogout();
     }
-
-    handleLogout(); // Call the logout function immediately
   }, [navigate]);
 
   return null;
