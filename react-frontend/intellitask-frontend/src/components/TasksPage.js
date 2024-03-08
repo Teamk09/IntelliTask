@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './TasksPage.css';
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -8,7 +7,6 @@ const TasksPage = () => {
 
   useEffect(() => {
     setIsLoading(true);
-
     fetch('http://127.0.0.1:8000/api/tasks/', {
       headers: {
         'Authorization': `Token ${localStorage.getItem('token')}`,
@@ -26,25 +24,26 @@ const TasksPage = () => {
       });
   }, []);
 
-  // Render loading, error, or tasks accordingly
   if (isLoading) {
-    return <p>Loading tasks...</p>;
+    return <p className="text-center text-gray-700">Loading tasks...</p>;
   }
 
   if (error) {
-    return <p>Error fetching tasks: {error.message}</p>;
+    return <p className="text-center text-red-600">Error fetching tasks: {error.message}</p>;
   }
 
   return (
-    <div className="task-list-container">
-      <h1>My Task List</h1>
-      <ul className="task-list">
-        {tasks.map((task) => (
-          <li className="task-item" key={task.id}>
-            <p>{task.title}</p>
-          </li>
-        ))}
-      </ul>
+    <div className="flex justify-center items-center h-screen">
+      <div className="bg-gray-100 p-8 rounded-lg shadow-md max-w-lg w-full">
+        <h1 className="text-2xl font-semibold text-gray-800 text-center mb-6">My Task List</h1>
+        <ul className="task-list">
+          {tasks.map((task) => (
+            <li key={task.id} className="bg-white p-4 rounded-md shadow-sm mb-4 transition-all duration-200 hover:translate-y-1 hover:shadow-md animate-fade-in">
+              <p className="text-lg text-gray-700">{task.title}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
