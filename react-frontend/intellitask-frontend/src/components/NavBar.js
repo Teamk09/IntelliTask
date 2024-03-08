@@ -12,6 +12,7 @@ const NavBar = () => {
   return (
     <nav className="fixed top-2 right-4 bg-gray-200 text-gray-800 z-10 flex items-center p-4 rounded-lg shadow-md">
       <div className="flex items-center">
+      
         <Link to="/" className="text-gray-800 text-lg font-semibold mr-4">
           My App
         </Link>
@@ -26,12 +27,17 @@ const NavBar = () => {
         <ul className="py-3">
           <li>
             <Link to="/tasks" className="block py-3 px-6 bg-gray-300 hover:bg-gray-400 text-white rounded-md m-2">
-              Tasks
+              <span className="flex items-center justify-center">Tasks</span>
+            </Link>
+          </li>
+          <li>
+            <Link to="/tasks/new" className="block py-3 px-6 bg-gray-300 hover:bg-gray-400 text-white rounded-md m-2">
+              <span className="flex items-center justify-center">Add Task</span>
             </Link>
           </li>
           <li>
             <Link to="/logout" onClick={Logout.handleLogout} className="block py-3 px-6 bg-gray-300 hover:bg-gray-400 text-white rounded-md m-2">
-              Logout
+               <span className="flex items-center justify-center">Logout</span>
             </Link>
           </li>
         </ul>

@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import AddTaskForm from './AddTask';
+import { useNavigate } from 'react-router-dom'; 
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoading(true);
+
     fetch('http://127.0.0.1:8000/api/tasks/', {
       headers: {
         'Authorization': `Token ${localStorage.getItem('token')}`,
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 401) { // Check for 401 Unauthorized
+            navigate('/login'); // Redirect to login
+          } else {
+            throw Error('Error fetching tasks');
+          }
+        }
+        return response.json();
+      })
       .then((data) => {
         setTasks(data);
         setIsLoading(false);
@@ -23,7 +34,7 @@ const TasksPage = () => {
         setIsLoading(false);
         console.error('Error fetching tasks: ', error);
       });
-  }, []);
+  }, [navigate]);
 
   if (isLoading) {
     return <p className="text-center text-gray-700">Loading tasks...</p>;
@@ -44,7 +55,6 @@ const TasksPage = () => {
             </li>
           ))}
         </ul>
-        <AddTaskForm />
       </div>
     </div>
   );

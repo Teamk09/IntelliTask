@@ -1,10 +1,11 @@
 //App.js
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import TasksPage from './components/TasksPage';
 import NavBar from './components/NavBar';
 import Logout from './components/LogoutForm';
+import AddTaskForm from './components/AddTask';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,8 +30,10 @@ function App() {
                 )
               }
             />
-            <Route path="/tasks" element={<TasksPage />} />
-            <Route path="/logout" element={<Logout />} />
+            <Route path="/" element={<Navigate to="/tasks" replace />} />
+            <Route path="/tasks/" element={<TasksPage />} />
+            <Route path="/logout/" element={<Logout />} />
+            <Route path="/tasks/new/" element={<AddTaskForm />} />
           </Routes>
         </main>
       </div>
