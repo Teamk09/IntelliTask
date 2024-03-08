@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AddTaskForm from './AddTask';
+import ProtectedRoute from '../ProtectedRoute';
+import { FiPlus } from "react-icons/fi";
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [taskCheckboxes, setTaskCheckboxes] = useState({}); // State for checkboxes
+  const [taskCheckboxes, setTaskCheckboxes] = useState({});
+  const [showAddTask, setShowAddTask] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,8 +22,8 @@ const TasksPage = () => {
     })
       .then((response) => {
         if (!response.ok) {
-          if (response.status === 401) { // Check for 401 Unauthorized
-            navigate('/login'); // Redirect to login
+          if (response.status === 401) {
+            navigate('/login');
           } else {
             throw Error('Error fetching tasks');
           }
@@ -27,7 +31,7 @@ const TasksPage = () => {
         return response.json();
       })
       .then((data) => {
-        const filteredTasks = data.filter((task) => !task.is_deleted); // Filter out deleted tasks
+        const filteredTasks = data.filter((task) => !task.is_deleted);
         setTasks(filteredTasks);
         const initialCheckboxes = data.reduce((acc, task) => {
           acc[task.id] = task.is_completed;
@@ -42,6 +46,8 @@ const TasksPage = () => {
         console.error('Error fetching tasks: ', error);
       });
   }, [navigate]);
+
+
 
   const handleTaskComplete = async (taskId) => {
     try {
@@ -74,23 +80,39 @@ const TasksPage = () => {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="bg-gray-100 p-8 rounded-lg shadow-md max-w-lg w-full">
-        <h1 className="text-2xl font-semibold text-gray-800 text-center mb-6">My Task List</h1>
-        <ul className="task-list">
-          {tasks.map((task) => (
-            <li key={task.id} className="bg-white p-4 rounded-md shadow-sm mb-4 transition-all duration-200 hover:translate-y-1 hover:shadow-md animate-fade-in flex items-center justify-between"> {/* Changes Here */}
-              <p className="text-lg text-gray-700">{task.title}</p>
-              <input
-                type="checkbox"
-                checked={taskCheckboxes[task.id] || false}
-                onChange={() => handleTaskComplete(task.id)}
-              />
-            </li>
-          ))}
-        </ul>
+    <ProtectedRoute>
+      <div className="flex justify-center items-center h-screen">
+        <div className="bg-white rounded-lg shadow-md p-8 max-w-3xl w-full">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-2xl font-semibold text-gray-800">My Task List</h1>
+            <button
+              className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md flex items-center focus:outline-none"
+              onClick={() => setShowAddTask(!showAddTask)}
+            >
+              <FiPlus />
+              {showAddTask ? 'Close' : 'New Task'}
+            </button>
+          </div>
+          <ul className="task-list">
+            {tasks.map((task) => (
+              <li
+                key={task.id}
+                className="bg-gray-100 p-4 rounded-md mb-4 flex items-center justify-between transition-all duration-200 hover:bg-gray-200"
+              >
+                <p className="text-lg text-gray-700">{task.title}</p>
+                <input
+                  type="checkbox"
+                  checked={taskCheckboxes[task.id] || false}
+                  onChange={() => handleTaskComplete(task.id)}
+                  className="form-checkbox h-5 w-5 text-indigo-600 transition duration-150 ease-in-out"
+                />
+              </li>
+            ))}
+          </ul>
+          {showAddTask && <AddTaskForm />}
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 };
 

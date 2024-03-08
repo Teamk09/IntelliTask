@@ -10,7 +10,6 @@ const AddTaskForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     setIsSubmitting(true);
     setSubmitError(null);
 
@@ -33,7 +32,8 @@ const AddTaskForm = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Task created:', data);
-        //Handles successful task creation
+
+
         setTitle('');
         setDescription('');
         setDeadline('');
@@ -50,9 +50,8 @@ const AddTaskForm = () => {
     }
   };
 
-
-    return (
-    <div className="mt-6">
+  return (
+    <div>
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Add New Task</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -65,7 +64,6 @@ const AddTaskForm = () => {
             className="w-full rounded-md border border-gray-300 p-2"
           />
         </div>
-
         <div className="mb-4">
           <label htmlFor="description" className="block text-gray-700">Description:</label>
           <textarea
@@ -75,42 +73,38 @@ const AddTaskForm = () => {
             className="w-full rounded-md border border-gray-300 p-2"
           />
         </div>
-
         <div className="mb-4">
           <label htmlFor="deadline" className="block text-gray-700">Deadline:</label>
           <input
-            type="datetime-local" // Use type="datetime-local"
+            type="datetime-local"
             id="deadline"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
             className="w-full rounded-md border border-gray-300 p-2"
           />
         </div>
-
         <div className="mb-4">
-            <label htmlFor="importance_level" className="block text-gray-700">Importance Level:</label>
-            <select
+          <label htmlFor="importance_level" className="block text-gray-700">Importance Level:</label>
+          <select
             id="importance_level"
             value={importanceLevel}
             onChange={(e) => setImportanceLevel(e.target.value)}
             className="w-full rounded-md border border-gray-300 p-2"
-            >
+          >
             <option value="1">Low</option>
             <option value="2">Medium</option>
             <option value="3">High</option>
-            </select>
+          </select>
         </div>
-
         <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md"
-            disabled={isSubmitting}
+          type="submit"
+          className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md"
+          disabled={isSubmitting}
         >
-            {isSubmitting ? 'Adding Task...' : 'Add Task'}
+          {isSubmitting ? 'Adding Task...' : 'Add Task'}
         </button>
-
         {submitError && <p className="text-red-600 mt-2">{submitError}</p>}
-        </form>
+      </form>
     </div>
   );
 };
