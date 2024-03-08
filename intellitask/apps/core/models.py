@@ -9,5 +9,6 @@ class Task(models.Model):
     deadline = models.DateTimeField()
     importance_level = models.IntegerField(choices=[(1, 'Low'), (2, 'Medium'), (3, 'High')])
     is_completed = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)     # Soft delete
     created_at = models.DateTimeField(auto_now_add=True)
     priority_score = models.IntegerField(blank=True, null=True)  # Keep for calculation later

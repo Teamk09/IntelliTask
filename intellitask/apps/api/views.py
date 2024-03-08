@@ -34,12 +34,12 @@ def api_logout_view(request):
 @permission_classes([IsAuthenticated])
 def api_task_list(request):
     if request.method == 'GET':
+        print("GETTING TASK LIST")
         auth_header = request.headers.get('Authorization')
         if auth_header:
             token = auth_header.split(' ')[1]
-        print(request.user)
         if request.user.is_authenticated:  # Check if user is authenticated
-            tasks = Task.objects.filter(user=request.user)  # Filter by logged-in user
+            tasks = Task.objects.filter(user=request.user, is_deleted=False) # Filter by logged-in user
             serializer = TaskSerializer(tasks, many=True)
             return Response(serializer.data)
         else:
@@ -71,11 +71,13 @@ def task_detail(request, pk):
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        serializer = TaskSerializer(task, data=request.data)
-        if serializer.is_valid():
-            serializer.save() # Update existing task
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+       serializer = TaskSerializer(task, data=request.data, partial=True)
+       if serializer.is_valid():
+           if 'is_completed' in request.data and request.data['is_completed']:
+               serializer.validated_data['is_deleted'] = True  # Mark for deletion
+           serializer.save()
+           return Response(serializer.data)
+       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
         task.delete()

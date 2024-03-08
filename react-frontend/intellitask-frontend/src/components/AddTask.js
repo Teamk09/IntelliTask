@@ -4,7 +4,7 @@ const AddTaskForm = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [importanceLevel, setImportanceLevel] = useState('low');
+  const [importanceLevel, setImportanceLevel] = useState('1');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
@@ -33,7 +33,7 @@ const AddTaskForm = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Task created:', data);
-        // Handle successful task creation (e.g., update the tasks list, reset the form)
+        //Handles successful task creation
         setTitle('');
         setDescription('');
         setDeadline('');
