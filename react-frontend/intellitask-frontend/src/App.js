@@ -20,17 +20,8 @@ function App() {
         <NavBar />
         <main className="container mx-auto flex-grow">
           <Routes>
-            <Route
-              path="/login"
-              element={
-                isLoggedIn ? (
-                  <Navigate to="/tasks" replace />
-                ) : (
-                  <LoginPage isLoggedIn={isLoggedIn} onLoginSuccess={handleLoginSuccess} />
-                )
-              }
-            />
-            <Route path="/" element={<Navigate to="/tasks" replace />} />
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<LoginPage isLoggedIn={isLoggedIn} onLoginSuccess={handleLoginSuccess} />} />
             <Route path="/tasks/" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
             <Route path="/logout/" element={<Logout />} />
             <Route path="/tasks/new/" element={<ProtectedRoute><AddTaskForm /></ProtectedRoute>} />

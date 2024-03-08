@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const LoginForm = ({ isLoggedIn, onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {

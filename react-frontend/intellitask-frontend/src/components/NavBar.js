@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Logout from './LogoutForm';
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,9 +11,9 @@ const NavBar = () => {
   return (
     <nav className="fixed top-2 right-4 bg-gray-200 text-gray-800 z-10 flex items-center p-4 rounded-lg shadow-md">
       <div className="flex items-center">
-      
+
         <Link to="/" className="text-gray-800 text-lg font-semibold mr-4">
-          My App
+          My List
         </Link>
         <button className="bg-none border-none text-gray-800 focus:outline-none" onClick={toggleNav}>
           <div className="w-6 h-1 bg-gray-800 mb-1"></div>
@@ -36,7 +35,7 @@ const NavBar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/logout" onClick={Logout.handleLogout} className="block py-3 px-6 bg-gray-300 hover:bg-gray-400 text-white rounded-md m-2">
+            <Link to="/logout" className="block py-3 px-6 bg-gray-300 hover:bg-gray-400 text-white rounded-md m-2">
                <span className="flex items-center justify-center">Logout</span>
             </Link>
           </li>

@@ -23,7 +23,6 @@ const TasksPage = () => {
       .then((response) => {
         if (!response.ok) {
           if (response.status === 401) {
-            navigate('/login');
           } else {
             throw Error('Error fetching tasks');
           }
