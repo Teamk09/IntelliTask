@@ -4,12 +4,32 @@ import { useNavigate } from 'react-router-dom';
 const SignupPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //Temporary page before I create the API backend
-    navigate('/login');
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/signup/', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        // Sign up successful, handle any additional logic here
+        navigate('/login');
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(errorData.error || 'An error occurred while signing up');
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      setErrorMessage('An error occurred while signing up');
+    }
   };
 
   return (

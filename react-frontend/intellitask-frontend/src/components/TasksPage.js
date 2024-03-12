@@ -14,6 +14,7 @@ const TasksPage = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const isMounted = useRef(false);
   const [sortOption, setSortOption] = useState('default');
+  const [sortDirection, setSortDirection] = useState('asc');
 
   useEffect(() => {
     if (!isMounted.current) {
@@ -53,16 +54,35 @@ const TasksPage = () => {
   }
 
   const sortTasks = (tasks) => {
+    let sortedTasks;
     switch (sortOption) {
       case 'date':
-        return tasks.sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
+        sortedTasks = tasks.sort((a, b) => {
+          const dateA = new Date(a.deadline);
+          const dateB = new Date(b.deadline);
+          return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+        });
+        break;
       case 'importance':
-        return tasks.sort((a, b) => b.importance_level - a.importance_level);
+        sortedTasks = tasks.sort((a, b) => {
+          const importanceA = a.importance_level;
+          const importanceB = b.importance_level;
+          return sortDirection === 'asc'
+            ? importanceA - importanceB
+            : importanceB - importanceA;
+        });
+        break;
       case 'alphabetical':
-        return tasks.sort((a, b) => a.title.localeCompare(b.title));
+        sortedTasks = tasks.sort((a, b) => {
+          return sortDirection === 'asc'
+            ? a.title.localeCompare(b.title)
+            : b.title.localeCompare(a.title);
+        });
+        break;
       default:
-        return tasks;
+        sortedTasks = tasks;
     }
+    return sortedTasks;
   };
 
   const handleTaskComplete = async taskId => {
@@ -110,23 +130,38 @@ const TasksPage = () => {
       <div className="flex justify-center items-center h-screen">
         <div className="bg-white rounded-lg shadow-md p-8 max-w-3xl w-full">
         <div className="flex justify-between items-center mb-8">
-         <div>
-          <label htmlFor="sort-option" className="mr-2">Sort by:</label>
-          <select id="sort-option" value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="bg-gray-200 rounded-md p-2">
-            <option value="default">Default</option>
-            <option value="date">Date</option>
-            <option value="importance">Importance</option>
-            <option value="alphabetical">Alphabetical</option>
-          </select>
+          <div className="flex items-center">
+            <label htmlFor="sort-option" className="mr-2">Sort by:</label>
+            <select
+              id="sort-option"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="bg-gray-200 rounded-md p-2 mr-2"
+            >
+              <option value="default">Default</option>
+              <option value="date">Date</option>
+              <option value="importance">Importance</option>
+              <option value="alphabetical">Alphabetical</option>
+            </select>
+            <label htmlFor="sort-direction" className="mr-2">Direction:</label>
+            <select
+              id="sort-direction"
+              value={sortDirection}
+              onChange={(e) => setSortDirection(e.target.value)}
+              className="bg-gray-200 rounded-md p-2"
+            >
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+          <button
+            className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md flex items-center focus:outline-none"
+            onClick={() => setShowAddTask(!showAddTask)}
+          >
+            <FiPlus />
+            {showAddTask ? 'Close' : 'New Task'}
+          </button>
         </div>
-        <button
-          className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md flex items-center focus:outline-none"
-          onClick={() => setShowAddTask(!showAddTask)}
-        >
-          <FiPlus />
-          {showAddTask ? 'Close' : 'New Task'}
-        </button>
-      </div>
           <ul className="task-list">
             {sortTasks(tasks).map(task => (
               <li
