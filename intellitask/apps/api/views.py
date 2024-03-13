@@ -49,12 +49,17 @@ def api_logout_view(request):
 @permission_classes([IsAuthenticated])
 def api_task_list(request):
     if request.method == 'GET':
-        print("GETTING TASK LIST")
         auth_header = request.headers.get('Authorization')
         if auth_header:
             token = auth_header.split(' ')[1]
-        if request.user.is_authenticated:  # Check if user is authenticated
-            tasks = Task.objects.filter(user=request.user, is_deleted=False) # Filter by logged-in user
+        if request.user.is_authenticated:
+            show_completed = request.query_params.get('show_completed', 'false').lower() == 'true'
+            if show_completed:
+                print("GETTING COMPLETED TASK LIST")
+                tasks = Task.objects.filter(user=request.user, is_completed=True)
+            else:
+                print("GETTING DEFAULT TASK LIST")
+                tasks = Task.objects.filter(user=request.user, is_completed=False, is_deleted=False)
             serializer = TaskSerializer(tasks, many=True)
             return Response(serializer.data)
         else:
