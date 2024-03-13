@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "lib": ["dom", "dom.iterable", "esnext"],    
+        "target": "ESNext",    
+        "types": ["vite/client"],
+        "isolatedModules": true,
+        "allowJs": true, // Allow JavaScript files to be compiled
+        "skipLibCheck": false,
+        "esModuleInterop": false,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "noEmit": true,
+        "jsx": "react"
+    },
+    "include": ["src/**/*.jsx", "src/**/*.js"] // Include JSX and JS files in src directory
+}
