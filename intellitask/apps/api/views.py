@@ -2,12 +2,14 @@ from apps.core.models import Task
 from .serializers import TaskSerializer
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from rest_framework import status
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+
+
 
 @api_view(['POST'])
 def api_signup_view(request):
@@ -18,6 +20,8 @@ def api_signup_view(request):
         try:
             user = User.objects.create_user(username=username, password=password)
             return Response({'success': 'User created successfully'}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     else:
