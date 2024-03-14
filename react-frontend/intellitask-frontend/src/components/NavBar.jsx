@@ -8,7 +8,7 @@ const NavBar = () => {
   return (
     <nav className="fixed top-2 right-4 bg-gray-200 text-gray-800 z-10 flex items-center p-4 rounded-lg shadow-md">
       <div className="flex items-center">
-        <Link to="/" className="text-gray-800 text-lg font-semibold mr-4">
+        <Link to="/tasks/" className="text-gray-800 text-lg font-semibold mr-4">
           My List
         </Link>
         <button

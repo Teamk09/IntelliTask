@@ -79,10 +79,10 @@ def api_task_list(request):
 @permission_classes([IsAuthenticated])
 def task_detail(request, pk):
     """
-    Retrieve, update or delete a specific task.
+    Retrieve, update, soft delete or hard delete a specific task.
     """
     try:
-        task = Task.objects.get(pk=pk, user=request.user) # Enforce ownership
+        task = Task.objects.get(pk=pk, user=request.user)  # Enforce ownership
     except Task.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -91,14 +91,20 @@ def task_detail(request, pk):
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-       serializer = TaskSerializer(task, data=request.data, partial=True)
-       if serializer.is_valid():
-           if 'is_completed' in request.data and request.data['is_completed']:
-               serializer.validated_data['is_deleted'] = True  # Mark for deletion
-           serializer.save()
-           return Response(serializer.data)
-       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = TaskSerializer(task, data=request.data, partial=True)
+        if serializer.is_valid():
+            if 'is_completed' in request.data and request.data['is_completed']:
+                serializer.validated_data['is_deleted'] = True  # Mark for soft deletion
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        task.delete()
+        # Check if 'permanent' query parameter is present
+        permanent = request.query_params.get('permanent', 'false').lower() == 'true'
+        if permanent:
+            task.delete()  # Permanently delete the task
+        else:
+            task.is_deleted = True  # Soft delete the task
+            task.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

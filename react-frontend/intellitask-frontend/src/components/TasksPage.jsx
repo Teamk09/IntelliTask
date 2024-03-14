@@ -112,9 +112,11 @@ const TasksPage = () => {
   };
 
 
-  const handleTaskClick = (task) => {
-    setSelectedTask(task);
-    setShowModal(true);
+  const handleTaskClick = (task, event) => {
+    if (event.target.type !== 'checkbox' && event.target.tagName.toLowerCase() !== 'button') {
+      setSelectedTask(task);
+      setShowModal(true);
+    }
   };
 
   const closeModal = () => {
@@ -128,7 +130,7 @@ const TasksPage = () => {
   return (
     <ProtectedRoute>
       <div className="flex justify-center items-center h-screen">
-        <div className="bg-white rounded-lg shadow-md p-8 max-w-3xl w-full">
+        <div className="bg-white rounded-lg shadow-md p-8 max-w-3xl w-full overflow-y-auto max-h-screen">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center">
             <label htmlFor="sort-option" className="mr-2">Sort by:</label>
@@ -167,7 +169,7 @@ const TasksPage = () => {
               <li
                 key={task.id}
                 className="bg-gray-100 p-4 rounded-md mb-4 flex items-center justify-between transition-all duration-200 hover:bg-gray-200 cursor-pointer"
-                onClick={() => handleTaskClick(task)}
+                onClick={(event) => handleTaskClick(task, event)}
               >
                 <p className="text-lg text-gray-700">{task.title}</p>
                 <input

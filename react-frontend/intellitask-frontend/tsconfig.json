@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "lib": ["dom", "dom.iterable", "esnext"],    
-        "target": "ESNext",    
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "target": "ESNext",
         "types": ["vite/client"],
         "isolatedModules": true,
         "allowJs": true, // Allow JavaScript files to be compiled
